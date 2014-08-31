@@ -29,9 +29,7 @@ module Exercises
   # Exercise 4
   #  - Returns the max number of the given array
   def self.ex4(array)
-    largest = array.first
-    array.each {|x| largest = x if x > largest }
-    largest
+    array.max
   end
 
   # Exercise 5
@@ -66,10 +64,9 @@ module Exercises
   #    { :name => 'Bob', :occupation => 'Builder' }
   #    Iterate through `people` and print out their name and occupation.
   def self.ex8(people)
-    people.each do |person|
-      print "#{person[:name]} is content making a living as an #{person[:occupation]}."
+    people.each do |p|
+      print "#{p[:name]}: #{p[:occupation]}"
     end
-    return "#{people.last[:name]} is content making a living as an #{people.last[:occupation]}."
   end
 
   # Exercise 9
@@ -88,8 +85,8 @@ module Exercises
   # Hint: Read the "Stubbing" documentation on the Learn app.
   def self.ex10
     hour = Time.now.hour
-    return "Happy Hour!" if (16 <= hour && hour <= 18)
-    return "Normal Prices"
+    return "Happy Hour!" if (16 == hour || hour == 17)
+    "Normal Prices"
   end
 end
 
@@ -105,6 +102,12 @@ module Extensions
   #   expect(result).to eq({ :most => 'x', :least => ['y', 'z'] })
   #
   def self.extremes(array)
-    # TODO
+    return nil if array.empty?
+    hash = Hash.new(0)
+    array.each {|x| hash[x.to_s]+=1}
+    hash2 = Hash.new
+    hash2[:most] = hash.max_by {|x,y| y}[0]
+    hash2[:least] = hash.min_by {|x,y| y}[0]
+    hash2
   end
 end
