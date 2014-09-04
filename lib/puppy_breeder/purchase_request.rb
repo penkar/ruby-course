@@ -7,7 +7,7 @@ module PuppyBreeder
     def initialize(breed)
       @request_id = @@counter
       @@counter += 1
-      @status = false
+      @status = 'pending'
       @breed = breed
     end
   end
@@ -15,20 +15,32 @@ module PuppyBreeder
 
 
   class RequestRepository
-    @@hold_list = []
     @@counter = 1
     @@list = Hash.new
-    @@completed_list=[]
-    @@pending_request = []
-    @@denied_request = []
     attr_accessor :number
+
+    def self.list(breed=false,status=false)
+      if breed && status
+        result = @@list.select {|x,y| y.status==status}
+        result2 = @@list.select {|x,y| y.breed==breed}
+        return result2
+      end
+      if breed
+        result = @@list.select {|x,y| y.breed==status}
+        return result
+      end
+      if status
+        result = @@list.select {|x,y| y.status==status}
+        return result
+      end
+      @@list
+    end
 
     ###########@status, and @accepted for the status of the request and whether or not it has been accepted.
 
     def self.add_request(request)
       @number = @@counter
       @@list[@number] = request
-      @@pending_request<< request  
       @@counter += 1
     end
 
@@ -38,54 +50,42 @@ module PuppyBreeder
     end
 
     def self.complete_request(request_id)
-      puts "Request #{request_id} has been filled."
-      @@completed_list << @@list[request_id]
-      @@pending_request.delete(@@list[request_id])
+      req = @list[request_id]
+      req.status = 'complete'
+    end
+
+    def self.completed_list
+      list(false,'complted')###############
     end
 
     def self.end_request(request_id)
-      puts "Request #{request_id} has been denied. Please contact Animal Protective services."
-      @@denied_request<< @@list[request_id]
-      @@pending_request.delete(@@list[request_id])
-    end
-
-    def self.list
-      @@list
+      req = @list[request_id]
+      req.status = 'ended'
     end
 
     def self.deny_list
-      @@deny_list
-    end
-
-    def self.pending_list
-      @@pending_request
+      list(false,'denied')###############
     end
 
     def self.breed_requested(request_id)
       @@list[request_id].breed      
     end
 
-    def self.completed_list
-      @@completed_list
-    end
-
     def self.pending_requests
-      @@pending_request
+      list(false,'pending')###############
     end
 
     def self.hold_request(request_id)
-      @@hold_list << @@list[request_id]
-      @@pending_request.delete(@@list[request_id])
+      @@list[request_id].status = 'hold'      
     end
 
     def self.hold_to_pending(request_id)
-      @@pending_request << @@list[request_id]
-      @@hold_list.delete(@@list[request_id])
+      @@list[request_id].status = 'pending'      
     end
 
-    def self.pending_list_kick(breed)
-      reconsider = @@pending_request.select {|x| x.breed == breed}
-      reconsider.each {|x| hold_to_pending(x)}
-    end
+    # def self.pending_list_kick(breed)
+    #   reconsider = @@pending_request.select {|x| x.breed == breed}
+    #   reconsider.each {|x| hold_to_pending(x)}
+    # end
   end
 end

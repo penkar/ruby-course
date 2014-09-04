@@ -1,0 +1,99 @@
+puppy breeder directory
+create entitles file
+	puppy.rb and requst .rb moved there.
+	create database director in entitiesl.
+
+	in databases (intains req_container.rb)
+		change it to reqquest_repo / puppy_repo.
+
+
+		**Goal is to change it from an array to a database.
+		Each one will contain a module repos.
+		The @Arrays will be # out
+
+			will need 
+				def initialize
+					@db = PG.connect(host: 'localhost', dbname: 'puppy-breeder')
+					built_tables ####REFERENCE ON LINE 88
+				end
+
+			Not deleting everything and starting from scratch because the methods will tell us what we need.
+
+			The self.log ones that show all dogs/ req of a certain type can be changed to pull the database.
+				def log
+					@log
+				end
+				def log
+					result = @db.exec("SELECT * FROM requests;")
+					#result.entries
+					result.entries.map do |req_hash| 
+						x = THEMILL::REQUEST.NEW(req_hash["breed"]
+						x.instance_variable_set :@id, req['id'].to_i
+						x.instance_variable_set :status, req["status"].to_sym
+						x
+					end
+				end
+					##this will look like a hash. key will be teh column name, the value, will be the values.
+					result.entries ~= [{'id'=>3},{"breed"=>'mix',"status"=>'pending'}]
+
+				def self.add_request(request)
+					if !puppy_log.has
+					pups_available = TheMill::Repos::Puppy.log.select {|p| p.breed == request.breed}
+					if pups_available.empty?
+						request.hold!
+					end
+
+					@db.exec(%q[
+						INSERT INTO requests (breed, status)
+						VALUES ($1, $2);
+						], [request.breed, request.status])
+				end
+
+				def self.hold!
+
+				def self.show_requets
+					result = @db.exec("
+						SELECT * FROM requests WHERE status = 'pending';
+					")
+				end
+
+				def build_request(hash)
+					x = THEMILL::REQUEST.NEW(req_hash["breed"]
+					x.instance_variable_set :@id, req['id'].to_i
+					x.instance_variable_set :status, req["status"].to_sym
+					x
+
+
+
+module PuppyMill
+	#setter methodd for request repo
+	def self.reqesut_repo=(x)
+		@request_repo = x
+	end
+
+	#getter methods
+	def self.request_repo
+		@resuts_repo
+	end
+end
+
+request relattive puppy
+request relattive req
+request relattive 
+request relattive puppy
+
+
+
+
+####after initialize that creates @DB.
+def build_tables
+	@db.exec(%q[
+	CREATE TABLE IF NOT EXISTS requests(
+		id serial,
+		breed text,
+		status text
+		)
+	])
+end
+
+###DUPLICATE FOR PUPPIES TABLE. 

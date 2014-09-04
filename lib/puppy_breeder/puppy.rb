@@ -8,7 +8,7 @@ module PuppyBreeder
     def initialize(breed='mix',name="spot", age='unknown')
       @id = @@counter
       @@counter +=1
-      @status = :pending
+      @status = 'available'
       @breed = breed
       @name = name
       @age = age
@@ -20,9 +20,23 @@ module PuppyBreeder
     @@costhash={'pinata'=>50,'shepard'=>5000,'pitbull'=>300,'golden retrierver'=>400,'mix'=>200,'ultra rare breed'=>1000,'lab'=>500}
     @@counter =1
     @@doglist = {}
-    @@available_dogs=[]
-    @@adopted_dogs = []
 
+    def self.doglist(breed=false,status=false)
+      if breed && status
+        result = @@doglist.select {|x,y| y.breed==breed}
+        result2 = @@doglist.select {|x,y| y.status==status}
+        return result2
+      end
+      if breed
+        result = @@doglist.select {|x,y| y.breed==breed}
+        return result
+      end
+      if status
+        result = @@doglist.select {|x,y| y.status==status}
+        return result
+      end
+      @@doglist      
+    end
 
     def add_breed_cost(breed,cost)
       @@costhash[breed]=cost
@@ -31,9 +45,8 @@ module PuppyBreeder
 
     def self.add_dog(dog)
       @@doglist[@@counter] = dog
-      @@available_dogs << dog
       @@counter += 1
-      PuppyBreeder::RequestRepository.pending_list_kick(dog.breed)
+      # PuppyBreeder::RequestRepository.pending_list_kick(dog.breed)
     end
 
     def self.create_dog(breed)
@@ -45,28 +58,24 @@ module PuppyBreeder
       @@costhash[@@doglist[id_number].breed]
     end
 
-    def self.available_by_breed(breed,name='spot')
-      result = @@available_dogs.select {|dog| dog.breed == breed}
-      result
+    def self.available_by_breed(breed)
+      doglist(breed,'available')
     end
 
-    def self.doglist
-      @@doglist      
-    end
 
     def self.adoption(dog_id)
       dog = doglist[dog_id]
-      dog.status = :adopted
-      @@adopted_dogs.push(dog)
-      @@available_dogs.delete(dog)
+      dog.status = 'adopted'
+    end
+
+    def self.adopted_list
+      doglist(false,'adopted')
     end
 
     def self.fill_dog_order(request_id,dog_id,condition=true)
       if condition
-        puts "Request #{request_id} for #{PuppyBreeder::RequestRepository.breed_requested(request_id)} has been filled. Dog #{dog_id}, #{@@doglist[dog_id].name} has been assigned."
         RequestRepository.complete_request(request_id)
       else
-        puts "Request #{request_id} for #{PuppyBreeder::RequestRepository.breed_requested(request_id)} has been ended. Dog #{dog_id}, #{@@doglist[dog_id].name} has not been assigned."
         RequestRepository.end_request(request_id)
       end
       return doglist[dog_id].name
@@ -75,7 +84,6 @@ module PuppyBreeder
     def self.first_avail_dog_breed(request_id)
       breed = RequestRepository.breed_requested(request_id)
       matches = doglist.select {|x,y| (y.breed == breed && y.status == 'available')}
-      p matches
       dog_id =  matches.keys[0]
       fill_dog_order(request_id,dog_id)
     end
@@ -86,3 +94,4 @@ module PuppyBreeder
 
   end
 end
+a = PuppyBreeder::DogShelter
