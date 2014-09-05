@@ -30,7 +30,6 @@ module PuppyBreeder
         return result
       end
       if status
-        # p @@list
         result = @@list.select {|x,y| y.status==status}
         return result
       end

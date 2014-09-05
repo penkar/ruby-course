@@ -1,0 +1,71 @@
+module App
+  module PuppyBreeder
+    class Request
+      def initialize
+        @db = PG.connect(host: "localhost",dbname: "dogproject")
+      end
+
+      def insert_request(id,status,breed)
+        @db.exec(%q[
+          "INSERT INTO mks (id,status,breed) 
+          VALUES( $1, $2 $3);
+          ],[name,age,breed])
+      end
+
+      # def build_tables
+      #   @db.exec(%q[
+      #   CREATE TABLE IF NOT EXISTS request(
+      #     id serial,
+      #     breed text,
+      #     status text
+      #     )
+      #   ])
+      # end
+
+
+      # def select_all_students
+      #   results = @db.exec(%q[
+      #       SELECT * FROM myfirstdb;
+      #     ])
+      # end
+    end
+  end
+
+
+  module PuppyBreeder
+    class Dog
+      def initialize
+        @db = PG.connect(host: "localhost",dbname: "dogproject")
+      end
+
+      def insert_dog(name,age)
+        @db.exec(%q[
+          "INSERT INTO mks (status,breed,name,age) 
+          VALUES( $1, $2 );
+          ],[status,breed,name,age])
+      end
+
+      # def build_tables
+      #   @db.exec(%q[
+      #   CREATE TABLE IF NOT EXISTS dogs(
+      #     id serial,
+      #     breed text,
+      #     status text,
+      #     name text,
+      #     age int
+      #     )
+      #   ])
+      # end
+
+
+      # def select_all_students
+      #   results = @db.exec(%q[
+      #       SELECT * FROM myfirstdb;
+      #     ])
+      # end
+    end
+  end
+
+end
+# mksrepo = APP::REPOSITORIES::MKS.NEW
+# mksrepo.insert_student("marco",99)
