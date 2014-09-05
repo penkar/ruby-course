@@ -1,6 +1,7 @@
 #Refer to this class as PuppyBreeder::PurchaseRequest
 module PuppyBreeder
   class PurchaseRequest
+    attr_accessor :id
     @@counter = 1
     attr_accessor :request_id, :status, :breed
 

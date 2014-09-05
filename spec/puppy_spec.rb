@@ -8,55 +8,38 @@ describe PuppyBreeder::Puppy do
     c = a.new('mix')
 
     expect(b.breed).to eq('pit')
-    expect(b.id).to eq(1)
+    expect(b.name).to eq('spot')
     expect(b.status).to eq('available')
     expect(c.breed).to eq('mix')  
-    expect(c.id).to eq(2)  
+    expect(c.name).to eq('spot')  
   end
 end
 
 
-describe PuppyBreeder::DogShelter do
+describe PuppyBreeder::Repos::Dog do
   it 'Should initialize an instance of a puppy.' do
-    a = PuppyBreeder::DogShelter
-    dog1 = PuppyBreeder::DogShelter.create_dog('lab')
-    expect(a.doglist.count).to eq(1)
+    PuppyBreeder.puppy_repo.drop_tables
+    dog_p = PuppyBreeder::Puppy.new('mix','spot',1)
+    dog_r = PuppyBreeder.puppy_repo.create_dog('mix','spot',1)
+    expect(PuppyBreeder.puppy_repo.log.count).to eq(1)
   end
+
   it 'Shelter should be able to check breed and cost.' do
-    a = PuppyBreeder::DogShelter
-    dog2 = PuppyBreeder::DogShelter.create_dog('pitbull')
-    expect(a.available_by_breed('pitbull').count).to eq(2)
-    dog3 = PuppyBreeder::DogShelter.create_dog('pitbull')
-    expect(a.available_by_breed('pitbull').count).to eq(3)
-    expect(a.cost?(1)).to eq(500)
-    expect(a.cost?(2)).to eq(300)
+    doga = PuppyBreeder.puppy_repo.create_dog('pitbull','spot',1)
+    dogb = PuppyBreeder.puppy_repo.create_dog('pitbull','spot',1)
+
+    expect(PuppyBreeder.puppy_repo.available_by_breed('mix').count).to eq(1)
+    expect(PuppyBreeder.puppy_repo.available_by_breed('pitbull').count).to eq(2)
+    expect(PuppyBreeder.puppy_repo.cost?(1)).to eq("$100.00")
+    expect(PuppyBreeder.puppy_repo.cost?(2)).to eq("$300.00")
   end
 
   it 'Should be able to fill do orders. =true' do
-    dog4 = PuppyBreeder::DogShelter.create_dog('pitbull')
-    dog5 = PuppyBreeder::DogShelter.create_dog('lab')
-    a = PuppyBreeder::DogShelter
-    r = PuppyBreeder::RequestRepository
-
-    allow(r).to receive(:breed_requested).and_return("mix")
-    allow(r).to receive(:complete_request).and_return("Request 40 has been filled.")
-    expect(a.fill_dog_order(40,4)).to eq('spot')
-  end
-
-  it 'Should be able to end orders. =false' do
-    a = PuppyBreeder::DogShelter
-    r = PuppyBreeder::RequestRepository
-
-    allow(r).to receive(:breed_requested).and_return("lab")
-    allow(r).to receive(:end_request).and_return("Request 41 has been denied. Please contact Animal Protective services.")
-    expect(a.fill_dog_order(41,5,false)).to eq('spot')
-  end
-
-  it 'Should be able to fill order by first available breed.' do
-    a = PuppyBreeder::DogShelter
-    r = PuppyBreeder::RequestRepository
-    allow(r).to receive(:breed_requested).and_return("shepard")
-    dog6 = PuppyBreeder::DogShelter.create_dog('shepard')
+    dog4 = PuppyBreeder.puppy_repo.create_dog('pitbull','spot',1)
+    dog5 = PuppyBreeder.puppy_repo.create_dog('pinata','spot',1)
+    PuppyBreeder.puppy_repo.fill_order(2,2)
+    expect(PuppyBreeder.puppy_repo.show_adopted.count).to eq(1)
+    expect(PuppyBreeder.request_repo.completed_list.count).to eq(3)
   end
 
 end
