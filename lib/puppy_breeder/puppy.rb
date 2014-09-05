@@ -42,11 +42,10 @@ module PuppyBreeder
       @@costhash[breed]=cost
     end
 
-
     def self.add_dog(dog)
       @@doglist[@@counter] = dog
       @@counter += 1
-      # PuppyBreeder::RequestRepository.pending_list_kick(dog.breed)
+      PuppyBreeder::RequestRepository.pending_list_kick(dog.breed)
     end
 
     def self.create_dog(breed)
@@ -62,10 +61,8 @@ module PuppyBreeder
       doglist(breed,'available')
     end
 
-
-    def self.adoption(dog_id)
-      dog = doglist[dog_id]
-      dog.status = 'adopted'
+    def self.adopt(dog_id)
+      doglist[dog_id].status = 'adopted'
     end
 
     def self.adopted_list
@@ -94,4 +91,3 @@ module PuppyBreeder
 
   end
 end
-a = PuppyBreeder::DogShelter

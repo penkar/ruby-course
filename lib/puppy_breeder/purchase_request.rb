@@ -30,13 +30,12 @@ module PuppyBreeder
         return result
       end
       if status
+        # p @@list
         result = @@list.select {|x,y| y.status==status}
         return result
       end
       @@list
     end
-
-    ###########@status, and @accepted for the status of the request and whether or not it has been accepted.
 
     def self.add_request(request)
       @number = @@counter
@@ -50,29 +49,27 @@ module PuppyBreeder
     end
 
     def self.complete_request(request_id)
-      req = @list[request_id]
-      req.status = 'complete'
+      @@list[request_id].status = 'complete'
     end
 
     def self.completed_list
-      list(false,'complted')###############
+      list(false,'complete')
     end
 
     def self.end_request(request_id)
-      req = @list[request_id]
-      req.status = 'ended'
+      @list[request_id].status = 'ended'
     end
 
     def self.deny_list
-      list(false,'denied')###############
+      list(false,'denied')
+    end
+
+    def self.pending_requests
+      list(false,'pending')
     end
 
     def self.breed_requested(request_id)
       @@list[request_id].breed      
-    end
-
-    def self.pending_requests
-      list(false,'pending')###############
     end
 
     def self.hold_request(request_id)
@@ -83,9 +80,9 @@ module PuppyBreeder
       @@list[request_id].status = 'pending'      
     end
 
-    # def self.pending_list_kick(breed)
-    #   reconsider = @@pending_request.select {|x| x.breed == breed}
-    #   reconsider.each {|x| hold_to_pending(x)}
-    # end
+    def self.pending_list_kick(breed)
+      reconsider = list(breed,'pending')
+      reconsider.each {|x,y| hold_to_pending(x)}
+    end
   end
 end

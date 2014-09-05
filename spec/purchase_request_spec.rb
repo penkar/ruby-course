@@ -8,7 +8,7 @@ describe PuppyBreeder::PurchaseRequest do
     b = PuppyBreeder::PurchaseRequest.new('mix')
     expect(b.request_id).to eq(1)
     expect(b.breed).to eq('mix')
-    expect(b.status).to eq(false)
+    expect(b.status).to eq('pending')
     c = PuppyBreeder::PurchaseRequest.new('mix')
     expect(c.request_id).to eq(2)
   end
@@ -29,13 +29,11 @@ describe PuppyBreeder::RequestRepository do
     a = PuppyBreeder::RequestRepository
     req3 = PuppyBreeder::RequestRepository.create_request
     req4 = PuppyBreeder::RequestRepository.create_request
-    expect(a.pending_list.count).to eq(4)
+    expect(a.pending_requests.count).to eq(4)
   end
 
-  it 'Should requests to be filled.' do
+  it 'Should generate list of completed requests.' do
     a = PuppyBreeder::RequestRepository
-    STDOUT.should_receive(:puts).with("Request 1 has been filled.")
-    STDOUT.should_receive(:puts).with("Request 2 has been filled.")
     a.complete_request(1)
     a.complete_request(2)
     expect(a.completed_list.count).to eq(2)
@@ -55,7 +53,7 @@ describe PuppyBreeder::RequestRepository do
     a.hold_request(5)
     a.hold_request(6)
     dog1 = PuppyBreeder::DogShelter.create_dog('mix')
-    expect(a.pending_requests.count).to eq(4)
+    expect(a.pending_requests.count).to eq(3)
   end
 
 
