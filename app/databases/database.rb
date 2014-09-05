@@ -7,7 +7,7 @@ module App
 
       def insert_request(id,status,breed)
         @db.exec(%q[
-          "INSERT INTO mks (id,status,breed) 
+          "INSERT INTO requests (id,status,breed) 
           VALUES( $1, $2 $3);
           ],[name,age,breed])
       end
@@ -41,7 +41,7 @@ module App
       def insert_dog(name,age)
         @db.exec(%q[
           "INSERT INTO mks (status,breed,name,age) 
-          VALUES( $1, $2 );
+          VALUES( $1, $2 $3 $4   );
           ],[status,breed,name,age])
       end
 
