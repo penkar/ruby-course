@@ -38,7 +38,6 @@ module PuppyBreeder
             sql = "WHERE status = '#{status}'"
           end
         end
-
         result = @db.exec("SELECT * FROM dogs " + sql)
         built_requests = (result.entries)
       end
